@@ -6,7 +6,10 @@ const UserSchema = new mongoose.Schema({
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    // Add other fields like address, phone_number as needed
+    phoneNumber: { type: String },
+    dateOfBirth: { type: Date },
+    gender: { type: String, enum: ['male', 'female', 'other'], default: undefined },
+    role: { type: String, enum: ['customer', 'admin', 'vendor'], default: 'customer' }
 }, { timestamps: true });
 
 // Encrypt password before saving user

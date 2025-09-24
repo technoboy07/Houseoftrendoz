@@ -1,43 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../redux/features/cartSlice';
+import { addToWishlist, removeFromWishlist, checkWishlistStatus } from '../redux/features/wishlistSlice';
 import { 
   HeartIcon, 
   EyeIcon, 
   StarIcon,
   PlusIcon 
 } from '../assets/Icons';
+import { formatPrice } from '../services/api';
 
 const ProductCard = ({ product, variant = 'default' }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector(state => state.auth);
+  const { wishlistStatus } = useSelector(state => state.wishlist);
+
+  const isWishlisted = wishlistStatus[product._id] || false;
+
+  useEffect(() => {
+    if (isAuthenticated && product._id) {
+      dispatch(checkWishlistStatus(product._id));
+    }
+  }, [dispatch, isAuthenticated, product._id]);
 
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      alert('Please sign in to add items to cart');
+      return;
+    }
+
     dispatch(addToCart({
-      id: product._id || product.id,
-      name: product.name,
-      price: product.price,
-      image: product.imageUrl || product.image,
-      category: product.category
+      productId: product._id,
+      quantity: 1
     }));
   };
 
   const handleWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
-  };
+    
+    if (!isAuthenticated) {
+      alert('Please sign in to add items to wishlist');
+      return;
+    }
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-    }).format(price);
+    if (isWishlisted) {
+      dispatch(removeFromWishlist(product._id));
+    } else {
+      dispatch(addToWishlist(product._id));
+    }
   };
 
   const renderStars = (rating) => {

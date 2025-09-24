@@ -1,12 +1,21 @@
 const mongoose = require('mongoose');
 
 const ProductSchema = new mongoose.Schema({
+  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: false },
+  brand: { type: String },
   name: { type: String, required: true, trim: true },
   description: { type: String, required: true },
-  price: { type: Number, required: true },
-  category: { type: String, required: true },
-  imageUrl: { type: String, required: true },
-  stock: { type: Number, required: true, default: 0 },
+  basePrice: { type: Number, required: true },
+  discountPrice: { type: Number },
+  currency: { type: String, default: 'USD' },
+  material: { type: String },
+  fit: { type: String },
+  careInstructions: { type: String },
+  slug: { type: String, unique: true, sparse: true },
+  // Backward-compat fields for existing frontend
+  imageUrl: { type: String },
+  price: { type: Number },
+  stock: { type: Number, default: 0 },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', ProductSchema);

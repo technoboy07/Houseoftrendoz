@@ -1,31 +1,66 @@
 const mongoose = require('mongoose');
 const Product = require('./models/Product');
+const Category = require('./models/Category');
+const ProductVariant = require('./models/ProductVariant');
+const ProductImage = require('./models/ProductImage');
 require('dotenv').config();
 
 const sampleProducts = [
   {
+    brand: "Trendoz",
     name: "Elegant Evening Dress",
     description: "A stunning evening dress perfect for special occasions. Made with premium silk fabric and featuring intricate beadwork details.",
-    price: 299,
-    category: "women",
-    imageUrl: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&h=600&fit=crop",
-    stock: 15
+    basePrice: 299,
+    discountPrice: 249,
+    currency: "USD",
+    material: "Silk",
+    fit: "Regular",
+    careInstructions: "Dry clean only",
+    slug: "elegant-evening-dress",
+    images: [
+      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&h=600&fit=crop"
+    ],
+    variants: [
+      { sku: "DRS-ELG-RED-S", size: "S", color: "Red", stockQuantity: 5 },
+      { sku: "DRS-ELG-RED-M", size: "M", color: "Red", stockQuantity: 5 },
+      { sku: "DRS-ELG-RED-L", size: "L", color: "Red", stockQuantity: 5 }
+    ]
   },
   {
+    brand: "Trendoz",
     name: "Classic Tailored Suit",
     description: "A sophisticated men's suit crafted from fine wool blend. Perfect for business meetings and formal events.",
-    price: 599,
-    category: "men",
-    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=600&fit=crop",
-    stock: 8
+    basePrice: 599,
+    currency: "USD",
+    material: "Wool Blend",
+    fit: "Slim",
+    careInstructions: "Dry clean",
+    slug: "classic-tailored-suit",
+    images: [
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=600&fit=crop"
+    ],
+    variants: [
+      { sku: "SUI-CLSC-NAVY-M", size: "M", color: "Navy", stockQuantity: 3 },
+      { sku: "SUI-CLSC-NAVY-L", size: "L", color: "Navy", stockQuantity: 3 },
+      { sku: "SUI-CLSC-NAVY-XL", size: "XL", color: "Navy", stockQuantity: 2 }
+    ]
   },
   {
+    brand: "Trendoz",
     name: "Luxury Leather Handbag",
     description: "Handcrafted leather handbag with gold hardware. Spacious interior with multiple compartments for organization.",
-    price: 199,
-    category: "accessories",
-    imageUrl: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&h=600&fit=crop",
-    stock: 12
+    basePrice: 199,
+    currency: "USD",
+    material: "Leather",
+    fit: "One Size",
+    careInstructions: "Wipe clean",
+    slug: "luxury-leather-handbag",
+    images: [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&h=600&fit=crop"
+    ],
+    variants: [
+      { sku: "BAG-LUX-BLK-OS", size: "M", color: "Black", stockQuantity: 12 }
+    ]
   },
   {
     name: "Designer Blouse",
@@ -91,13 +126,76 @@ const seedDatabase = async () => {
     await mongoose.connect(process.env.MONGO);
     console.log('✅ Connected to MongoDB');
 
-    // Clear existing products
+    // Clear existing collections
+    await ProductImage.deleteMany({});
+    await ProductVariant.deleteMany({});
     await Product.deleteMany({});
+    await Category.deleteMany({});
     console.log('🗑️  Cleared existing products');
 
-    // Insert sample products
-    const products = await Product.insertMany(sampleProducts);
-    console.log(`✅ Inserted ${products.length} products`);
+    // Seed categories
+    const women = await Category.create({ name: 'Women', slug: 'women' });
+    const men = await Category.create({ name: 'Men', slug: 'men' });
+    const accessories = await Category.create({ name: 'Accessories', slug: 'accessories' });
+
+    // Insert sample products with variants and images
+    let totalProducts = 0;
+    for (const p of sampleProducts) {
+      const resolvedSlug = (p.slug || p.name || 'product')
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-');
+
+      // Map category preference
+      let categoryDoc = accessories;
+      if (typeof p.category === 'string') {
+        const cat = p.category.toLowerCase();
+        if (cat === 'women') categoryDoc = women;
+        else if (cat === 'men') categoryDoc = men;
+      } else if (resolvedSlug.includes('dress')) {
+        categoryDoc = women;
+      } else if (resolvedSlug.includes('suit') || resolvedSlug.includes('shirt') || resolvedSlug.includes('jacket')) {
+        categoryDoc = men;
+      }
+
+      const images = Array.isArray(p.images) && p.images.length > 0 ? p.images : (p.imageUrl ? [p.imageUrl] : []);
+      const variants = Array.isArray(p.variants) && p.variants.length > 0 ? p.variants : [{
+        sku: `${resolvedSlug}`.toUpperCase().slice(0, 10) + '-OS',
+        size: 'M',
+        color: 'Default',
+        stockQuantity: p.stock || 0,
+      }];
+
+      const product = await Product.create({
+        category: categoryDoc._id,
+        brand: p.brand,
+        name: p.name,
+        description: p.description,
+        basePrice: p.basePrice || p.price || 0,
+        discountPrice: p.discountPrice,
+        currency: p.currency,
+        material: p.material,
+        fit: p.fit,
+        careInstructions: p.careInstructions,
+        slug: resolvedSlug,
+        // Backward-compat for existing frontend
+        imageUrl: images[0],
+        price: p.basePrice || p.price || 0,
+        stock: variants.reduce((sum, v) => sum + (v.stockQuantity || 0), 0)
+      });
+
+      for (let i = 0; i < images.length; i++) {
+        await ProductImage.create({ product: product._id, imageUrl: images[i], isMain: i === 0 });
+      }
+
+      for (const v of variants) {
+        await ProductVariant.create({ product: product._id, ...v });
+      }
+      totalProducts += 1;
+    }
+    console.log(`✅ Inserted ${totalProducts} products with variants and images`);
 
     console.log('🎉 Database seeded successfully!');
     process.exit(0);

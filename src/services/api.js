@@ -121,6 +121,129 @@ export const isAuthenticated = () => {
   return !!localStorage.getItem('token');
 };
 
+// Cart API functions
+export const getCart = async () => {
+  try {
+    const response = await api.get('/cart');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching cart:', error);
+    throw error;
+  }
+};
+
+export const addToCart = async (cartData) => {
+  try {
+    const response = await api.post('/cart', cartData);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+    throw error;
+  }
+};
+
+export const updateCartItem = async (itemId, quantity) => {
+  try {
+    const response = await api.put(`/cart/${itemId}`, { quantity });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating cart item:', error);
+    throw error;
+  }
+};
+
+export const removeFromCart = async (itemId) => {
+  try {
+    const response = await api.delete(`/cart/${itemId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error removing from cart:', error);
+    throw error;
+  }
+};
+
+export const clearCart = async () => {
+  try {
+    const response = await api.delete('/cart');
+    return response.data;
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+    throw error;
+  }
+};
+
+// Wishlist API functions
+export const getWishlist = async () => {
+  try {
+    const response = await api.get('/wishlist');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching wishlist:', error);
+    throw error;
+  }
+};
+
+export const addToWishlist = async (productId) => {
+  try {
+    const response = await api.post('/wishlist', { productId });
+    return response.data;
+  } catch (error) {
+    console.error('Error adding to wishlist:', error);
+    throw error;
+  }
+};
+
+export const removeFromWishlist = async (productId) => {
+  try {
+    const response = await api.delete(`/wishlist/${productId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error removing from wishlist:', error);
+    throw error;
+  }
+};
+
+export const checkWishlist = async (productId) => {
+  try {
+    const response = await api.get(`/wishlist/check/${productId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error checking wishlist:', error);
+    throw error;
+  }
+};
+
+// Payment API functions
+export const getPaymentKey = async () => {
+  try {
+    const response = await api.get('/payments/key');
+    return response.data;
+  } catch (error) {
+    console.error('Error getting payment key:', error);
+    throw error;
+  }
+};
+
+export const createRazorpayOrder = async (shippingAddress) => {
+  try {
+    const response = await api.post('/payments/create-order', { shippingAddress });
+    return response.data;
+  } catch (error) {
+    console.error('Error creating Razorpay order:', error);
+    throw error;
+  }
+};
+
+export const verifyPayment = async (paymentData) => {
+  try {
+    const response = await api.post('/payments/verify', paymentData);
+    return response.data;
+  } catch (error) {
+    console.error('Error verifying payment:', error);
+    throw error;
+  }
+};
+
 // Order API functions
 export const createOrder = async (orderData) => {
   try {

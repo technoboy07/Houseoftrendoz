@@ -1,4 +1,6 @@
 const Product = require('../models/Product');
+const ProductVariant = require('../models/ProductVariant');
+const ProductImage = require('../models/ProductImage');
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -19,7 +21,11 @@ exports.getProductById = async (req, res, next) => {
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
-    res.status(200).json(product);
+    const [variants, images] = await Promise.all([
+      ProductVariant.find({ product: product._id }),
+      ProductImage.find({ product: product._id }).sort({ isMain: -1, createdAt: 1 })
+    ]);
+    res.status(200).json({ ...product.toObject(), variants, images });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

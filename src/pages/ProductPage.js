@@ -35,7 +35,7 @@ const ProductPage = () => {
     
     // Fetch products with current filters
     dispatch(getProducts(filters));
-  }, [dispatch, category, search]);
+  }, [dispatch, category, search, filters]);
 
   const handleFilterChange = (filterType, value) => {
     const newFilters = { ...filters, [filterType]: value };

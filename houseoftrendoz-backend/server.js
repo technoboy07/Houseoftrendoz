@@ -19,12 +19,18 @@ app.use(cors());
 
 // Mount routers
 const productRoutes = require('./routes/productRoutes');
-const authRoutes = require('./routes/authRoutes'); // New
-const orderRoutes = require('./routes/orderRoutes'); // New
+const authRoutes = require('./routes/authRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const cartRoutes = require('./routes/cartRoutes');
+const wishlistRoutes = require('./routes/wishlistRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 app.use('/api/products', productRoutes);
-app.use('/api/auth', authRoutes); // New
-app.use('/api/orders', orderRoutes); // New
+app.use('/api/auth', authRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

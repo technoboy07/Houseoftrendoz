@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../redux/features/authSlice';
 import { 
   LogoIcon, 
   SearchIcon, 
@@ -8,7 +9,7 @@ import {
   HeartIcon, 
   BagIcon, 
   MenuIcon, 
-  CloseIcon,
+  CloseIcon, 
   ChevronDownIcon 
 } from '../assets/Icons';
 
@@ -17,11 +18,23 @@ const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
   
-  // Get cart items count from Redux store
-  const cartItems = useSelector(state => state.cart?.items || []);
-  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  // Get all needed state in one selector to prevent multiple re-renders
+  const { isAuthenticated, user, cartItems, totalItems } = useSelector(state => ({
+    isAuthenticated: state.auth?.isAuthenticated || false,
+    user: state.auth?.user,
+    cartItems: state.cart?.items || [],
+    totalItems: state.cart?.totalItems || 0
+  }));
+  
+  const cartItemCount = useCallback(() => {
+    return cartItems.reduce((total, item) => total + (item.quantity || 0), 0);
+  }, [cartItems]);
 
   // Handle scroll effect
   useEffect(() => {
@@ -49,9 +62,16 @@ const Navbar = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to products page with search query
-      window.location.href = `/products?search=${encodeURIComponent(searchQuery)}`;
+      navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery('');
+      setIsSearchOpen(false);
     }
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setShowUserMenu(false);
+    navigate('/');
   };
 
   return (
@@ -95,14 +115,63 @@ const Navbar = () => {
 
             {/* Right Section - User Actions */}
             <div className="flex items-center space-x-4">
-              <button className="hidden lg:block p-2 hover:bg-gray-100 rounded-md transition-colors">
-                <UserIcon />
-              </button>
-              <button className="hidden lg:block p-2 hover:bg-gray-100 rounded-md transition-colors">
+              {!isAuthenticated ? (
+                <>
+                  <Link to="/login" className="hidden lg:block p-2 hover:bg-gray-100 rounded-md transition-colors">
+                    <UserIcon />
+                  </Link>
+                </>
+              ) : (
+                <div className="hidden lg:block relative">
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-md transition-colors"
+                  >
+                    <UserIcon />
+                    <span className="text-sm">{user?.firstName || 'User'}</span>
+                    <ChevronDownIcon className="w-3 h-3" />
+                  </button>
+                  
+                  {/* User Dropdown Menu */}
+                  {showUserMenu && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
+                      <Link
+                        to="/profile"
+                        className="block px-4 py-2 text-sm text-luxury-gray hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        My Profile
+                      </Link>
+                      <Link
+                        to="/orders"
+                        className="block px-4 py-2 text-sm text-luxury-gray hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        My Orders
+                      </Link>
+                      <Link
+                        to="/wishlist"
+                        className="block px-4 py-2 text-sm text-luxury-gray hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        Wishlist
+                      </Link>
+                      <hr className="my-1" />
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-sm text-luxury-gray hover:bg-gray-100"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+              <Link to="/wishlist" className="hidden lg:block p-2 hover:bg-gray-100 rounded-md transition-colors">
                 <HeartIcon />
-              </button>
+              </Link>
               <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-md transition-colors relative">
-                <BagIcon itemCount={cartItemCount} />
+                <BagIcon itemCount={totalItems || cartItemCount()} />
               </Link>
             </div>
           </div>
@@ -180,10 +249,17 @@ const Navbar = () => {
                 </Link>
               ))}
               <div className="pt-4 border-t border-gray-200 space-y-4">
-                <button className="flex items-center space-x-2 text-luxury-black hover:text-luxury-gold transition-colors">
-                  <UserIcon />
-                  <span>Account</span>
-                </button>
+                {!isAuthenticated ? (
+                  <Link to="/login" className="flex items-center space-x-2 text-luxury-black hover:text-luxury-gold transition-colors">
+                    <UserIcon />
+                    <span>Account</span>
+                  </Link>
+                ) : (
+                  <div className="flex items-center space-x-2 text-luxury-black">
+                    <UserIcon />
+                    <span>Account</span>
+                  </div>
+                )}
                 <button className="flex items-center space-x-2 text-luxury-black hover:text-luxury-gold transition-colors">
                   <HeartIcon />
                   <span>Wishlist</span>

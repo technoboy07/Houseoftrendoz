@@ -18,6 +18,10 @@ JWT_SECRET=your_super_secret_jwt_key_here
 
 # Server Port
 PORT=5000
+
+# Razorpay Configuration
+RAZORPAY_KEY_ID=your_razorpay_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret
 ```
 
 ### 2. Install Backend Dependencies
@@ -51,6 +55,24 @@ npm run seed
 ### Authentication
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login user
+
+### Cart
+- `GET /api/cart` - Get user's cart (requires authentication)
+- `POST /api/cart` - Add item to cart (requires authentication)
+- `PUT /api/cart/:itemId` - Update cart item quantity (requires authentication)
+- `DELETE /api/cart/:itemId` - Remove item from cart (requires authentication)
+- `DELETE /api/cart` - Clear entire cart (requires authentication)
+
+### Wishlist
+- `GET /api/wishlist` - Get user's wishlist (requires authentication)
+- `POST /api/wishlist` - Add product to wishlist (requires authentication)
+- `DELETE /api/wishlist/:productId` - Remove product from wishlist (requires authentication)
+- `GET /api/wishlist/check/:productId` - Check if product is in wishlist (requires authentication)
+
+### Payments
+- `GET /api/payments/key` - Get Razorpay key (public)
+- `POST /api/payments/create-order` - Create Razorpay order (requires authentication)
+- `POST /api/payments/verify` - Verify payment (requires authentication)
 
 ### Orders
 - `POST /api/orders` - Create new order (requires authentication)
