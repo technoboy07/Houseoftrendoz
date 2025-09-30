@@ -84,9 +84,11 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = {
           id: action.payload._id,
+          _id: action.payload._id,
           firstName: action.payload.firstName,
           lastName: action.payload.lastName,
           email: action.payload.email,
+          role: action.payload.role || 'customer',
         };
         state.isAuthenticated = true;
         state.error = null;
@@ -105,9 +107,11 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = {
           id: action.payload._id,
+          _id: action.payload._id,
           firstName: action.payload.firstName,
           lastName: action.payload.lastName,
           email: action.payload.email,
+          role: action.payload.role || 'customer',
         };
         state.isAuthenticated = true;
         state.error = null;

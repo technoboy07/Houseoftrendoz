@@ -10,6 +10,7 @@ import {
   PlusIcon 
 } from '../assets/Icons';
 import { formatPrice } from '../services/api';
+import { getImageUrl } from '../utils/imageUtils';
 
 const ProductCard = ({ product, variant = 'default' }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -88,26 +89,26 @@ const ProductCard = ({ product, variant = 'default' }) => {
         <div className="relative overflow-hidden rounded-lg bg-white shadow-sm hover:shadow-lg transition-all duration-300">
           <div className="aspect-square relative">
             <img
-              src={product.imageUrl || product.image}
+              src={getImageUrl(product.imageUrl || product.image)}
               alt={product.name}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
             <div className="absolute top-2 right-2">
               <button
                 onClick={handleWishlist}
-                className="p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors"
+                className="p-1.5 sm:p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors touch-manipulation"
               >
                 <HeartIcon 
                   filled={isWishlisted} 
-                  className="w-4 h-4" 
+                  className="w-3 h-3 sm:w-4 sm:h-4" 
                 />
               </button>
             </div>
           </div>
-          <div className="p-4">
-            <h3 className="font-medium text-sm mb-1 line-clamp-2">{product.name}</h3>
+          <div className="p-3 sm:p-4">
+            <h3 className="font-medium text-xs sm:text-sm mb-1 line-clamp-2">{product.name}</h3>
             <div className="flex items-center justify-between">
-              <span className="text-lg font-light">{formatPrice(product.price)}</span>
+              <span className="text-sm sm:text-lg font-light">{formatPrice(product.price)}</span>
               {product.rating && (
                 <div className="flex items-center space-x-1">
                   {renderStars(product.rating)}
@@ -131,13 +132,26 @@ const ProductCard = ({ product, variant = 'default' }) => {
           {/* Image Container */}
           <div className="relative aspect-[3/4] overflow-hidden">
             <img
-              src={product.imageUrl || product.image}
+              src={getImageUrl(product.imageUrl || product.image)}
               alt={product.name}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
             
-            {/* Overlay Actions */}
-            <div className={`absolute inset-0 bg-black/20 flex items-center justify-center transition-all duration-300 ${
+            {/* Mobile Touch Actions - Always visible on mobile */}
+            <div className="absolute top-2 right-2 sm:hidden">
+              <button
+                onClick={handleWishlist}
+                className="p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors touch-manipulation"
+              >
+                <HeartIcon 
+                  filled={isWishlisted} 
+                  className="w-4 h-4" 
+                />
+              </button>
+            </div>
+            
+            {/* Desktop Overlay Actions */}
+            <div className={`absolute inset-0 bg-black/20 hidden sm:flex items-center justify-center transition-all duration-300 ${
               isHovered ? 'opacity-100' : 'opacity-0'
             }`}>
               <div className="flex space-x-2">
@@ -159,36 +173,36 @@ const ProductCard = ({ product, variant = 'default' }) => {
               </div>
             </div>
 
-            {/* Quick Add Button */}
-            <div className={`absolute bottom-4 left-4 right-4 transition-all duration-300 ${
-              isHovered ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+            {/* Quick Add Button - Mobile always visible, desktop on hover */}
+            <div className={`absolute bottom-2 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-4 transition-all duration-300 ${
+              isHovered || window.innerWidth < 640 ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}>
               <button
                 onClick={handleAddToCart}
-                className="w-full btn-primary flex items-center justify-center space-x-2"
+                className="w-full btn-primary flex items-center justify-center space-x-2 text-sm sm:text-base py-2 sm:py-3 touch-manipulation"
               >
-                <PlusIcon className="w-4 h-4" />
+                <PlusIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span>Add to Cart</span>
               </button>
             </div>
 
             {/* Sale Badge */}
             {product.sale && (
-              <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 text-xs font-medium rounded">
+              <div className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-red-500 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs font-medium rounded">
                 SALE
               </div>
             )}
 
             {/* New Badge */}
             {product.isNew && (
-              <div className="absolute top-4 right-4 bg-luxury-gold text-luxury-black px-2 py-1 text-xs font-medium rounded">
+              <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-luxury-gold text-luxury-black px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs font-medium rounded">
                 NEW
               </div>
             )}
           </div>
 
           {/* Product Info */}
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {/* Rating */}
             {product.rating && (
               <div className="flex items-center space-x-1 mb-2">
@@ -198,24 +212,24 @@ const ProductCard = ({ product, variant = 'default' }) => {
             )}
 
             {/* Product Name */}
-            <h3 className="text-lg font-medium mb-2 line-clamp-2 group-hover:text-luxury-gold transition-colors">
+            <h3 className="text-base sm:text-lg font-medium mb-2 line-clamp-2 group-hover:text-luxury-gold transition-colors">
               {product.name}
             </h3>
 
             {/* Category */}
             {product.category && (
-              <p className="text-sm text-luxury-gray mb-2 capitalize">
+              <p className="text-xs sm:text-sm text-luxury-gray mb-2 capitalize">
                 {product.category}
               </p>
             )}
 
             {/* Price */}
             <div className="flex items-center space-x-2">
-              <span className="text-xl font-light text-luxury-black">
+              <span className="text-lg sm:text-xl font-light text-luxury-black">
                 {formatPrice(product.price)}
               </span>
               {product.originalPrice && product.originalPrice > product.price && (
-                <span className="text-sm text-luxury-gray line-through">
+                <span className="text-xs sm:text-sm text-luxury-gray line-through">
                   {formatPrice(product.originalPrice)}
                 </span>
               )}
@@ -227,7 +241,7 @@ const ProductCard = ({ product, variant = 'default' }) => {
                 {product.variants.colors && product.variants.colors.slice(0, 4).map((color, index) => (
                   <div
                     key={index}
-                    className="w-4 h-4 rounded-full border border-gray-300"
+                    className="w-3 h-3 sm:w-4 sm:h-4 rounded-full border border-gray-300"
                     style={{ backgroundColor: color }}
                     title={color}
                   />

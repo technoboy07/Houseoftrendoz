@@ -163,24 +163,24 @@ const CartPage = () => {
 
   return (
     <div className="min-h-screen bg-luxury-cream">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
           <div className="flex items-center space-x-4">
             <button 
               onClick={() => navigate(-1)}
               className="flex items-center space-x-2 text-luxury-gray hover:text-luxury-black transition-colors"
             >
-              <ArrowLeftIcon />
-              <span>Continue Shopping</span>
+              <ArrowLeftIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base">Continue Shopping</span>
             </button>
           </div>
-          <h1 className="text-luxury">Shopping Cart</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-serif font-light">Shopping Cart</h1>
           {items.length > 0 && (
             <button 
               onClick={handleClearCart}
-              className="text-sm text-red-500 hover:text-red-700 transition-colors"
+              className="text-sm text-red-500 hover:text-red-700 transition-colors self-start sm:self-auto"
             >
               Clear Cart
             </button>
@@ -188,60 +188,60 @@ const CartPage = () => {
         </div>
 
         {items.length === 0 ? (
-          <div className="text-center py-20">
-            <BagIcon className="w-16 h-16 text-luxury-gray mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-luxury-black mb-2">Your cart is empty</h3>
-            <p className="text-luxury-gray mb-6">Add some products to get started</p>
+          <div className="text-center py-12 sm:py-20">
+            <BagIcon className="w-12 h-12 sm:w-16 sm:h-16 text-luxury-gray mx-auto mb-4" />
+            <h3 className="text-lg sm:text-xl font-medium text-luxury-black mb-2">Your cart is empty</h3>
+            <p className="text-luxury-gray mb-6 text-sm sm:text-base">Add some products to get started</p>
             <button 
               onClick={() => navigate('/products')}
-              className="btn-primary"
+              className="btn-primary text-sm sm:text-base py-3 px-6"
             >
               Shop Now
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
             
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               {items.map((item) => (
-                <div key={item._id} className="bg-white rounded-lg p-6 shadow-sm">
-                  <div className="flex items-center space-x-4">
+                <div key={item._id} className="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
                     <img
                       src={item.product.imageUrl}
                       alt={item.product.name}
-                      className="w-20 h-20 object-cover rounded-lg"
+                      className="w-full sm:w-20 h-32 sm:h-20 object-cover rounded-lg"
                     />
                     <div className="flex-1">
-                      <h3 className="text-lg font-medium text-luxury-black mb-1">
+                      <h3 className="text-base sm:text-lg font-medium text-luxury-black mb-1">
                         {item.product.name}
                       </h3>
-                      <p className="text-luxury-gray text-sm mb-2">
+                      <p className="text-luxury-gray text-xs sm:text-sm mb-2">
                         {item.variant && `${item.variant.size} • ${item.variant.color}`}
                       </p>
-                      <p className="text-xl font-light text-luxury-black">
+                      <p className="text-lg sm:text-xl font-light text-luxury-black">
                         {formatPrice(item.price)}
                       </p>
                     </div>
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center justify-between sm:justify-end space-x-3">
                       <div className="flex items-center border border-gray-300 rounded-md">
                         <button
                           onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
-                          className="p-2 hover:bg-gray-100"
+                          className="p-2 hover:bg-gray-100 touch-manipulation"
                         >
-                          <MinusIcon className="w-4 h-4" />
+                          <MinusIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                         </button>
-                        <span className="px-4 py-2 min-w-[3rem] text-center">{item.quantity}</span>
+                        <span className="px-3 sm:px-4 py-2 min-w-[2.5rem] sm:min-w-[3rem] text-center text-sm sm:text-base">{item.quantity}</span>
                         <button
                           onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
-                          className="p-2 hover:bg-gray-100"
+                          className="p-2 hover:bg-gray-100 touch-manipulation"
                         >
-                          <PlusIcon className="w-4 h-4" />
+                          <PlusIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                         </button>
                       </div>
                       <button
                         onClick={() => handleRemoveItem(item._id)}
-                        className="p-2 text-red-500 hover:text-red-700 transition-colors"
+                        className="p-2 text-red-500 hover:text-red-700 transition-colors touch-manipulation"
                       >
                         <TrashIcon className="w-4 h-4" />
                       </button>
@@ -253,67 +253,67 @@ const CartPage = () => {
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg p-6 shadow-sm sticky top-8">
-                <h3 className="text-xl font-medium text-luxury-black mb-6">Order Summary</h3>
+              <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm lg:sticky lg:top-8">
+                <h3 className="text-lg sm:text-xl font-medium text-luxury-black mb-4 sm:mb-6">Order Summary</h3>
                 
-                <div className="space-y-3 mb-6">
+                <div className="space-y-3 mb-4 sm:mb-6">
                   <div className="flex justify-between">
-                    <span className="text-luxury-gray">Items ({totalItems})</span>
-                    <span className="text-luxury-black">{formatPrice(totalAmount)}</span>
+                    <span className="text-sm sm:text-base text-luxury-gray">Items ({totalItems})</span>
+                    <span className="text-sm sm:text-base text-luxury-black">{formatPrice(totalAmount)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-luxury-gray">Shipping</span>
-                    <span className="text-green-600">Free</span>
+                    <span className="text-sm sm:text-base text-luxury-gray">Shipping</span>
+                    <span className="text-sm sm:text-base text-green-600">Free</span>
                   </div>
                   <div className="border-t border-gray-200 pt-3">
                     <div className="flex justify-between">
-                      <span className="text-lg font-medium text-luxury-black">Total</span>
-                      <span className="text-lg font-medium text-luxury-black">{formatPrice(totalAmount)}</span>
+                      <span className="text-base sm:text-lg font-medium text-luxury-black">Total</span>
+                      <span className="text-base sm:text-lg font-medium text-luxury-black">{formatPrice(totalAmount)}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Shipping Address Form */}
-                <div className="mb-6">
-                  <h4 className="text-lg font-medium text-luxury-black mb-4">Shipping Address</h4>
+                <div className="mb-4 sm:mb-6">
+                  <h4 className="text-base sm:text-lg font-medium text-luxury-black mb-3 sm:mb-4">Shipping Address</h4>
                   <div className="space-y-3">
                     <input
                       type="text"
                       placeholder="Address"
                       value={shippingAddress.address}
                       onChange={(e) => setShippingAddress({...shippingAddress, address: e.target.value})}
-                      className="input-luxury"
+                      className="input-luxury text-sm sm:text-base py-2 sm:py-2"
                     />
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <input
                         type="text"
                         placeholder="City"
                         value={shippingAddress.city}
                         onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})}
-                        className="input-luxury"
+                        className="input-luxury text-sm sm:text-base py-2 sm:py-2"
                       />
                       <input
                         type="text"
                         placeholder="State"
                         value={shippingAddress.state}
                         onChange={(e) => setShippingAddress({...shippingAddress, state: e.target.value})}
-                        className="input-luxury"
+                        className="input-luxury text-sm sm:text-base py-2 sm:py-2"
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <input
                         type="text"
                         placeholder="Pincode"
                         value={shippingAddress.pincode}
                         onChange={(e) => setShippingAddress({...shippingAddress, pincode: e.target.value})}
-                        className="input-luxury"
+                        className="input-luxury text-sm sm:text-base py-2 sm:py-2"
                       />
                       <input
                         type="tel"
                         placeholder="Phone"
                         value={shippingAddress.phone}
                         onChange={(e) => setShippingAddress({...shippingAddress, phone: e.target.value})}
-                        className="input-luxury"
+                        className="input-luxury text-sm sm:text-base py-2 sm:py-2"
                       />
                     </div>
                   </div>
@@ -322,7 +322,7 @@ const CartPage = () => {
                 <button
                   onClick={handleCheckout}
                   disabled={isCheckingOut || items.length === 0}
-                  className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 text-sm sm:text-base py-3 touch-manipulation"
                 >
                   {isCheckingOut ? (
                     <>
@@ -337,7 +337,7 @@ const CartPage = () => {
                   )}
                 </button>
 
-                <p className="text-xs text-luxury-gray text-center mt-4">
+                <p className="text-xs text-luxury-gray text-center mt-3 sm:mt-4">
                   Secure payment powered by Razorpay
                 </p>
               </div>

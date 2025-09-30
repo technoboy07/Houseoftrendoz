@@ -12,6 +12,7 @@ import Footer from './components/Footer';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import WishlistPage from './pages/WishlistPage';
+import AdminPage from './pages/AdminPage';
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ function AppContent() {
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/admin" element={<AdminPage />} />
           {/* Add more routes for checkout, user profile, etc. */}
         </Routes>
       </main>

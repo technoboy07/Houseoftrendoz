@@ -39,13 +39,13 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-luxury-cream flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-luxury-cream flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-6 sm:space-y-8">
         <div>
           <div className="flex justify-center">
-            <LogoIcon className="w-12 h-12 text-luxury-black" />
+            <LogoIcon className="w-10 h-10 sm:w-12 sm:h-12 text-luxury-black" />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-serif text-luxury-black">
+          <h2 className="mt-4 sm:mt-6 text-center text-2xl sm:text-3xl font-serif text-luxury-black">
             Sign in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-luxury-gray">
@@ -58,9 +58,9 @@ const LoginPage = () => {
             </Link>
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-6 sm:mt-8 space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+            <div className="bg-red-50 border border-red-200 text-red-600 px-3 sm:px-4 py-2 sm:py-3 rounded-md text-sm">
               {error}
             </div>
           )}
@@ -77,7 +77,7 @@ const LoginPage = () => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="input-luxury"
+                className="input-luxury text-base py-3 sm:py-2"
                 placeholder="Enter your email"
               />
             </div>
@@ -93,13 +93,13 @@ const LoginPage = () => {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="input-luxury"
+                className="input-luxury text-base py-3 sm:py-2"
                 placeholder="Enter your password"
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
             <div className="flex items-center">
               <input
                 id="remember-me"
@@ -123,7 +123,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-luxury-black hover:bg-luxury-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-luxury-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="group relative w-full flex justify-center py-3 sm:py-3 px-4 border border-transparent text-base sm:text-sm font-medium rounded-md text-white bg-luxury-black hover:bg-luxury-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-luxury-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors touch-manipulation"
             >
               {loading ? (
                 <>

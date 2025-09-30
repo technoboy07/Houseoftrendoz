@@ -49,6 +49,7 @@ const Navbar = () => {
   useEffect(() => {
     setIsMenuOpen(false);
     setIsSearchOpen(false);
+    setShowUserMenu(false); // Close user menu on route change
   }, [location]);
 
   const navigationItems = [
@@ -156,6 +157,15 @@ const Navbar = () => {
                       >
                         Wishlist
                       </Link>
+                      {user?.role === 'admin' && (
+                        <Link
+                          to="/admin"
+                          className="block px-4 py-2 text-sm text-luxury-gray hover:bg-gray-100"
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          Admin Panel
+                        </Link>
+                      )}
                       <hr className="my-1" />
                       <button
                         onClick={handleLogout}
@@ -237,38 +247,100 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200 bg-white">
+          <div className="lg:hidden border-t border-gray-200 bg-white max-h-screen overflow-y-auto">
             <div className="px-4 py-6 space-y-4">
+              {/* Mobile Search */}
+              <div className="mb-6">
+                <form onSubmit={handleSearchSubmit}>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search products..."
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-luxury-gold focus:border-transparent text-base"
+                    />
+                    <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  </div>
+                </form>
+              </div>
+
+              {/* Navigation Items */}
               {navigationItems.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
-                  className="block text-lg font-medium text-luxury-black hover:text-luxury-gold transition-colors"
+                  className="block text-lg font-medium text-luxury-black hover:text-luxury-gold transition-colors py-2"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
               ))}
+              
+              {/* User Actions */}
               <div className="pt-4 border-t border-gray-200 space-y-4">
                 {!isAuthenticated ? (
-                  <Link to="/login" className="flex items-center space-x-2 text-luxury-black hover:text-luxury-gold transition-colors">
-                    <UserIcon />
-                    <span>Account</span>
+                  <Link 
+                    to="/login" 
+                    className="flex items-center space-x-3 text-luxury-black hover:text-luxury-gold transition-colors py-2"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <UserIcon className="w-5 h-5" />
+                    <span className="text-lg">Sign In</span>
                   </Link>
                 ) : (
-                  <div className="flex items-center space-x-2 text-luxury-black">
-                    <UserIcon />
-                    <span>Account</span>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3 text-luxury-black py-2">
+                      <UserIcon className="w-5 h-5" />
+                      <span className="text-lg">Welcome, {user?.firstName || 'User'}</span>
+                    </div>
+                    <div className="ml-8 space-y-2">
+                      <Link 
+                        to="/profile" 
+                        className="block text-base text-luxury-gray hover:text-luxury-gold transition-colors py-1"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        My Profile
+                      </Link>
+                      <Link 
+                        to="/orders" 
+                        className="block text-base text-luxury-gray hover:text-luxury-gold transition-colors py-1"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        My Orders
+                      </Link>
+                      <button 
+                        onClick={handleLogout}
+                        className="block text-base text-luxury-gray hover:text-luxury-gold transition-colors py-1"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
                   </div>
                 )}
-                <button className="flex items-center space-x-2 text-luxury-black hover:text-luxury-gold transition-colors">
-                  <HeartIcon />
-                  <span>Wishlist</span>
-                </button>
+                
+                <Link 
+                  to="/wishlist" 
+                  className="flex items-center space-x-3 text-luxury-black hover:text-luxury-gold transition-colors py-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <HeartIcon className="w-5 h-5" />
+                  <span className="text-lg">Wishlist</span>
+                </Link>
+                
+                <Link 
+                  to="/cart" 
+                  className="flex items-center space-x-3 text-luxury-black hover:text-luxury-gold transition-colors py-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <BagIcon itemCount={totalItems || cartItemCount()} className="w-5 h-5" />
+                  <span className="text-lg">Cart ({totalItems || cartItemCount()})</span>
+                </Link>
               </div>
             </div>
           </div>
         )}
-      </nav>
+    </nav>
 
       {/* Spacer to prevent content from hiding behind fixed navbar */}
       <div className="h-32 lg:h-40"></div>
