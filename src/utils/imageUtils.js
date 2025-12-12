@@ -1,3 +1,5 @@
+import API_URL from '../config/api';
+
 /**
  * Utility function to get the full image URL
  * Handles both external URLs and uploaded images
@@ -14,7 +16,8 @@ export const getImageUrl = (imageUrl) => {
   
   // If it's a relative path (starts with /uploads), prepend backend URL
   if (imageUrl.startsWith('/uploads')) {
-    return `http://localhost:5000${imageUrl}`;
+    const API_BASE_URL = API_URL.replace('/api', ''); // Remove /api from the URL
+    return `${API_BASE_URL}${imageUrl}`;
   }
   
   // For any other case, return as-is

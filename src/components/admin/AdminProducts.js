@@ -8,6 +8,7 @@ import {
   clearError,
   clearSuccess 
 } from '../../redux/features/adminSlice';
+import { getImageUrl } from '../../utils/imageUtils';
 import { 
   FiSearch, 
   FiPlus, 
@@ -145,7 +146,7 @@ const ProductModal = ({ product, isOpen, onClose, onSave }) => {
         imageUrl: product.imageUrl || '',
         category: product.category?._id || ''
       });
-      setImagePreview(product.imageUrl ? `http://localhost:5000${product.imageUrl}` : null);
+      setImagePreview(product.imageUrl ? getImageUrl(product.imageUrl) : null);
     } else {
       setFormData({
         name: '',
