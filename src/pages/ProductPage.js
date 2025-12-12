@@ -23,19 +23,20 @@ const ProductPage = () => {
   const category = searchParams.get('category') || '';
   const search = searchParams.get('search') || '';
 
+  // Sync URL parameters to filters and fetch products (only when URL changes)
   useEffect(() => {
-    // Set filters from URL parameters
-    const urlFilters = {};
-    if (category) urlFilters.category = category;
-    if (search) urlFilters.search = search;
+    const urlFilters = {
+      category: category || '',
+      search: search || '',
+      sort: '' // Sort is handled separately via handleSort
+    };
     
-    if (Object.keys(urlFilters).length > 0) {
-      dispatch(setFilters(urlFilters));
-    }
+    // Always update filters from URL (they are the source of truth)
+    dispatch(setFilters(urlFilters));
     
-    // Fetch products with current filters
-    dispatch(getProducts(filters));
-  }, [dispatch, category, search, filters]);
+    // Fetch products with URL-based filters
+    dispatch(getProducts(urlFilters));
+  }, [dispatch, category, search]); // Only depend on URL params to prevent loops
 
   const handleFilterChange = (filterType, value) => {
     const newFilters = { ...filters, [filterType]: value };
