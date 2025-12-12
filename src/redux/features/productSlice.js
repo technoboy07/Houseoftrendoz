@@ -68,7 +68,8 @@ const productSlice = createSlice({
       })
       .addCase(getProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = action.payload;
+        // Ensure payload is always an array
+        state.products = Array.isArray(action.payload) ? action.payload : [];
         state.error = null;
       })
       .addCase(getProducts.rejected, (state, action) => {

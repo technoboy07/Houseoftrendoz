@@ -15,8 +15,11 @@ const HomePage = () => {
     dispatch(getProducts({ limit: 3 }));
   }, [dispatch]);
 
+  // Ensure products is always an array
+  const productsArray = Array.isArray(products) ? products : [];
+  
   // Get featured products (first 3 products)
-  const featuredProducts = products.slice(0, 3);
+  const featuredProducts = productsArray.slice(0, 3);
 
   const collections = [
     {
